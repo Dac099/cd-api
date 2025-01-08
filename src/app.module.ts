@@ -8,13 +8,14 @@ import { Client } from './quotes/entities/client.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: '127.0.0.1',
       port: 5432,
-      username: 'postgres',
+      username: 'dac099',
       password: '1991',
-      database: 'cd-api',
+      database: 'carrocerias',
       entities: [BodyQuote, Client],
       synchronize: true,
+      logging: true,
     }),
     QuotesModule,
   ],

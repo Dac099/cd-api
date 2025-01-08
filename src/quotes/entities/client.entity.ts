@@ -1,10 +1,9 @@
-import { Entity, Column, PrimaryColumn, Generated, OneToMany } from 'typeorm';
-import { Quote } from './quote.entity';
+import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BodyQuote } from './quote.entity';
 
 @Entity()
 export class Client {
-  @PrimaryColumn()
-  @Generated('uuid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({
@@ -40,6 +39,6 @@ export class Client {
   })
   createdAt: Date;
 
-  @OneToMany(() => Quote, (quote) => quote.client)
-  quotes: Quote[];
+  @OneToMany(() => BodyQuote, (bodyQuote) => bodyQuote.client)
+  quotes: BodyQuote[];
 }

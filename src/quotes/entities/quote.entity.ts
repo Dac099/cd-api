@@ -1,13 +1,10 @@
-import { Entity, Column, Generated, PrimaryColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Client } from './client.entity';
 
-export abstract class Quote {
-  @PrimaryColumn()
-  @Generated('uuid')
+@Entity()
+export class BodyQuote {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @ManyToOne(() => Client, (client) => client.quotes)
-  client: Client;
 
   @Column({
     nullable: false,
@@ -32,10 +29,7 @@ export abstract class Quote {
     default: () => 'CURRENT_DATE',
   })
   createdAt: Date;
-}
 
-@Entity()
-export class BodyQuote extends Quote {
   @Column({
     nullable: false,
     type: 'real',
@@ -59,4 +53,7 @@ export class BodyQuote extends Quote {
     nullable: true,
   })
   extra_notes: string;
+
+  @ManyToOne(() => Client, (client) => client.quotes)
+  client: Client;
 }
