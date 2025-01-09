@@ -14,7 +14,7 @@ export class QuotesService {
   ) {}
 
   async getAll(): Promise<GetAllQuotesDto[]> {
-    const quotes = this.quoteRepository
+    const quotes = await this.quoteRepository
       .createQueryBuilder('quote')
       .innerJoinAndSelect('quote.client', 'client')
       .select([
@@ -27,7 +27,7 @@ export class QuotesService {
       ])
       .getRawMany();
 
-    return (await quotes).map((quote) => {
+    return quotes.map((quote) => {
       return {
         clientName: quote.name,
         dimensions: {
@@ -44,25 +44,32 @@ export class QuotesService {
   async create(payload: PostQuoteDto) {
     const { anonymous } = payload;
     let client: Client | null;
-    //Crear cotización
-    //Verificar si el cliente existe
-    //Si es anónimo, obtener cliente anónimo
-    //Si no existe, crearlo
+
+    const quote = this.quoteRepository.create({
+      price: payload.price,
+      height: payload.height,
+      width: payload.width,
+      length: payload.length,
+      deliveryDate: payload.deliveryDate,
+      extra_notes: payload.extraNotes,
+      description: payload.description,
+    });
+    await this.quoteRepository.save(quote);
+
     if (anonymous) {
-      client = await this.clientRepository.findOneBy({
+      client = await this.clientRepository.save({
         name: 'Anonymous',
       });
-
-      if (!client) {
-        client = this.clientRepository.create({
-          name: 'Anonymous',
-        });
-      }
-    }else {
-      client = await this.clientRepository.findOneBy({ })
+    } else {
+      client = await this.clientRepository.save({
+        name: payload.clientName,
+        email: payload.clientEmail,
+        phone: payload.clientPhone,
+        company: payload.clientCompany,
+      });
     }
-    //De lo contrario buscar cliente por nombre y teléfono
-    //Si no existe, crearlo
-    //Agregar cotización al cliente
+
+    client.quotes.push(quote);
+    await this.clientRepository.save(client);
   }
 }

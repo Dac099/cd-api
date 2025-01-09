@@ -16,6 +16,7 @@ export class Client {
     unique: true,
     nullable: true,
     length: 100,
+    default: 'Not provided',
   })
   email: string;
 
@@ -23,6 +24,7 @@ export class Client {
     unique: true,
     nullable: true,
     length: 12,
+    default: 'Not provided',
   })
   phone: string;
 
