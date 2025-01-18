@@ -1,4 +1,11 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { QuotesService } from './quotes.service';
 import { PostQuoteDto } from './dtos/post-quote.dto';
 import { GetAllQuotesDto } from './dtos/get-all-quotes.dto';
@@ -9,11 +16,33 @@ export class QuotesController {
 
   @Get()
   async getAll(): Promise<GetAllQuotesDto[]> {
-    return this.quoteService.getAll();
+    try {
+      return this.quoteService.getAll();
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Ocurrió un problema al obtener las cotizaciones',
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Post()
   async create(@Body() payload: PostQuoteDto) {
-    return this.quoteService.create(payload);
+    try {
+      return this.quoteService.create(payload);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Ocurrió un problema al crear la cotización',
+          error: error.message,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
